@@ -12,56 +12,85 @@ let displayPrevNum = document.getElementById("previous");
 let buttonsNumber = document.querySelectorAll(".btn");
 buttonsNumber.forEach((item) =>{
     
+    //add keyboard support done by GitHub Copilot
+    document.addEventListener('keydown', (e) =>{
+        if(e.key == item.textContent){
+            item.click();
+        }else if(e.key == "Enter"){
+            document.getElementById("enter").click();
+        }else if(e.key == "c" || e.key == "C"){
+            document.getElementById("clear").click();
+        }
+
+    });
+
+
+
     item.addEventListener('click', (e) =>{
         console.log(e);
         if(item.textContent != "+" && item.textContent != "-" && item.textContent != "*" && item.textContent != "/" && item.textContent != "Clear" && item.textContent != "="){
+            let entered = false;
+            if(item.textContent == "."){
+                if(display.includes(".")){
+                    
+                }else{
+                    entered = true;
+                    display += item.textContent;
+
+                }
+            }
+            
+            
+            else{
             display += item.textContent;
+            }
             console.log(`Display check: ${display}`);
             displayNumber.textContent = display;
             console.log(`Output check: ${displayNumber.textContent}`);
-        }else{
-            let prevOperator;
-            operator = item.textContent;
-            console.log(`Operator check: ${operator}`);
-            // displayPrevNum.textContent = `${prevDisplay} ${operator}`;
-            if(item.textContent == "+" || item.textContent == "-" || item.textContent == "*"  || item.textContent == "/" ){
-                
+        }else if(item.textContent == "+" || item.textContent == "-" || item.textContent == "*" || item.textContent == "/"){
+            let newOperator = item.textContent;
+            console.log(`Operator check: ${prevDisplay} ${operator} ${display}`);
+            displayPrevNum.textContent = `${prevDisplay} ${newOperator}`;
 
-
-                if(prevDisplay == " "){
+                if(prevDisplay == " " && display != " "){
                     
                     prevDisplay = display;
+                    displayPrevNum.textContent = `${prevDisplay} ${newOperator}`;
                     display = " ";
                     displayNumber.textContent = " ";
+                    
                 }
                 if(prevDisplay != " "){
-                    prevDisplay = operate(Number(prevDisplay), Number(display), operator);
-                    // displayPrevNum.textContent = `${prevDisplay} ${operator}`;
+                    if(display != " "){
+                    prevDisplay = Math.round(operate(Number(prevDisplay), Number(display), operator) * 10000) / 10000;
+                    displayPrevNum.textContent = `${prevDisplay} ${newOperator}`;
                     display = " ";
                     displayNumber.textContent = " ";
-
-
                 }
-                
+            }
+            operator = item.textContent;
+        }
 
+        else if(item.textContent == "Clear"){
+            operator = " ";
+            display = " ";
+            prevDisplay = " ";
+            displayNumber.textContent = " ";
+            displayPrevNum.textContent = " ";
+        }
 
-
-            }else if(item.textContent == "Clear"){
+        else if(item.textContent == "="){
+            if(display != " " && prevDisplay != " " && operator != " "){
+                prevDisplay = Math.round(operate(Number(prevDisplay), Number(display), operator) * 10000) / 10000;
+                displayNumber.textContent = prevDisplay;
+                displayPrevNum.textContent = prevDisplay;
                 display = " ";
-                prevDisplay = " ";
-                displayNumber.textContent = " ";
-                displayPrevNum.textContent = " ";
-            }else if(item.textContent == "="){
-                
+
 
 
 
             }
-
-
-
         }
-
 
     });
 
